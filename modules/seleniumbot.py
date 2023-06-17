@@ -20,7 +20,7 @@ from selenium.webdriver.common.keys import Keys  # and Krates
 import requests
 import re
 import logging
-from email_util import check_confirmation_code
+from modules.email_util import check_confirmation_code
 # from fake_useragent import UserAgent
 
 # from pymailutils import Imap
