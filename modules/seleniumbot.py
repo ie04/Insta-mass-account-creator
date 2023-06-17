@@ -14,10 +14,13 @@ from modules.storeusername import store
 # library import
 from selenium import webdriver
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys  # and Krates
 import requests
 import re
 import logging
+from email_util import check_confirmation_code
 # from fake_useragent import UserAgent
 
 # from pymailutils import Imap
@@ -66,7 +69,7 @@ class AccountCreator():
 
         # fill the email value
         print('Filling email field')
-        email_field = driver.find_element_by_name('emailOrPhone')
+        email_field = driver.find_element(By.NAME, 'emailOrPhone')
         print(email_field)
         sleep(1)
         action_chains.move_to_element(email_field)
@@ -77,7 +80,7 @@ class AccountCreator():
 
         # fill the fullname value
         print('Filling fullname field')
-        fullname_field = driver.find_element_by_name('fullName')
+        fullname_field = driver.find_element(By.NAME, 'fullName')
         action_chains.move_to_element(fullname_field)
         fullname_field.send_keys(account_info["name"])
 
@@ -85,7 +88,7 @@ class AccountCreator():
 
         # fill username value
         print('Filling username field')
-        username_field = driver.find_element_by_name('username')
+        username_field = driver.find_element(By.NAME, 'username')
         action_chains.move_to_element(username_field)
         username_field.send_keys(account_info["username"])
 
@@ -93,7 +96,7 @@ class AccountCreator():
 
         # fill password value
         print('Filling password field')
-        password_field = driver.find_element_by_name('password')
+        password_field = driver.find_element(By.NAME, 'password')
         action_chains.move_to_element(password_field)
         passW = account_info["password"]
         print(passW)
@@ -102,35 +105,36 @@ class AccountCreator():
 
         sleep(2)
 
-        submit = driver.find_element_by_xpath(
-            '//*[@id="react-root"]/section/main/div/div/div[1]/div/form/div[7]/div/button')
+        submit = driver.find_element(By.XPATH,'//button[text()="Sign up"]')
 
         action_chains.move_to_element(submit)
 
         sleep(2)
         submit.click()
-
         sleep(3)
         try:
 
-            month_button = driver.find_element_by_xpath( '//*[@id="react-root"]/section/main/div/div/div[1]/div/div[4]/div/div/span/span[1]/select')
-            month_button.click()
-            month_button.send_keys(account_info["birthday"].split(" ")[0])
+            month_in = Select(driver.find_element(By.XPATH, "//select[@title='Month:']"))
+            month_in.select_by_visible_text(account_info["birth_month"])
             sleep(1)
-            day_button = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/div[1]/div/div[4]/div/div/span/span[2]/select')
-            day_button.click()
-            day_button.send_keys(account_info["birthday"].split[" "][1][:-1])
-            sleep(1)
-            year_button = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/div/div[1]/div/div[4]/div/div/span/span[3]/select')
-            year_button.click()
-            year_button.send_keys(account_info["birthday"].split[" "][2])
+            day_in = Select(driver.find_element(By.XPATH, "//select[@title='Day:']"))
+            day_in.select_by_visible_text(account_info["birth_day"])
 
-            sleep(2)
-            next_button = driver.find_elements_by_xpath('//*[@id="react-root"]/section/main/div/div/div[1]/div/div[6]/button')
+            sleep(1)
+            year_in = Select(driver.find_element(By.XPATH, "//select[@title='Year:']"))
+            year_in.select_by_visible_text(account_info["birth_year"])
+
+            next_button = driver.find_element(By.XPATH,'//button[text()="Next"]')
             next_button.click()
-
+            
+            sleep(3)
+            code = check_confirmation_code("eltifiiyad@gmail.com", "Wsxcft12345@")
+            
+            conf_in = driver.find_element(By.XPATH, '//input[@name="email_confirmation_code"]')
+            conf_in.send_keys(code)
+            
         except Exception as e :
-            pass
+            print(e)
 
 
         sleep(4)
@@ -141,7 +145,7 @@ class AccountCreator():
             Currently buggy code.
         """
         # Activate the account
-        # confirm_url = get_activation_url(account_info['email'])
+        
         # logging.info("The confirm url is {}".format(confirm_url))
         # driver.get(confirm_url)
 
@@ -188,7 +192,7 @@ class AccountCreator():
                             try:
                                 self.createaccount()
                             except Exception as e:
-                                print('Error!, Check its possible your ip might be banned')
+                                print(Exception)
                                 self.createaccount()
 
 

@@ -15,11 +15,14 @@ def store(account):
         logging.info(str(account))
         writer = csv.writer(file)
         writer.writerow(["Name", "Username", "Password", "Email", "Gender", "Birthday"])
+        
+        birthday = account["birth_month"] + "/" + account["birth_day"] + "/" + account["birth_year"] #concatenates birthday into single line
+        
         writer.writerow([
             account["name"], 
             account["username"], 
             account["password"], 
             account["email"],
             account["gender"],
-            account["birthday"]
+            birthday
         ])
